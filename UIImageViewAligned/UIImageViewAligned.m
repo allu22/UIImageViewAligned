@@ -8,6 +8,12 @@
 
 #import "UIImageViewAligned.h"
 
+@interface UIImageViewAligned()
+
+@property (nonatomic, readonly) UIImageView* realImageView;
+
+@end
+
 @implementation UIImageViewAligned
 
 - (id)initWithFrame:(CGRect)frame
@@ -21,22 +27,14 @@
 }
 
 
-- (id)initWithImage:(UIImage *)image
+- (instancetype)initWithImage:(UIImage *)image
 {
-    self = [super initWithImage:image];
+    self = [super init];
     if (self)
     {
         [self commonInit];
+        [_realImageView setImage:image];
     }
-    return self;
-}
-
-- (id)initWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage
-{
-    self = [super initWithImage:image highlightedImage:highlightedImage];
-    if (self)
-        [self commonInit];
-    
     return self;
 }
 
@@ -50,23 +48,12 @@
 
 - (void)commonInit
 {
-    _enableScaleDown = TRUE;
-    _enableScaleUp = TRUE;
-    
     _alignment = UIImageViewAlignmentMaskCenter;
     
     _realImageView = [[UIImageView alloc] initWithFrame:self.bounds];
-    _realImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _realImageView.contentMode = self.contentMode;
+    [_realImageView setAutoresizingMask: UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [_realImageView setContentMode:self.contentMode];
     [self addSubview:_realImageView];
-    
-    // Move any image we might have from this container to the real image view
-    if (super.image != nil)
-    {
-        UIImage* img = super.image;
-        super.image = nil;
-        self.image = img;
-    }
 }
 
 - (UIImage*)image
@@ -83,11 +70,11 @@
 - (void)setContentMode:(UIViewContentMode)contentMode
 {
     [super setContentMode:contentMode];
-    _realImageView.contentMode = contentMode;
+    [_realImageView setContentMode:contentMode];
     [self setNeedsLayout];
 }
 
-- (void)setAlignment:(UIImageViewAignmentMask)alignment
+- (void)setAlignment:(UIImageViewAlignmentMask)alignment
 {
     if (_alignment == alignment)
         return ;
@@ -113,7 +100,7 @@
     else if ((_alignment & UIImageViewAlignmentMaskBottom) != 0)
         realframe.origin.y = CGRectGetMaxY(self.bounds) - realframe.size.height;
     
-    _realImageView.frame = realframe;
+    [_realImageView setFrame:realframe];
 
 }
 
@@ -121,7 +108,7 @@
 {
     CGSize size = self.bounds.size;
 
-    if (self.image == nil)
+    if (_realImageView.image == nil)
         return size;
 
     switch (self.contentMode)
@@ -132,9 +119,6 @@
             float scaley = self.bounds.size.height / _realImageView.image.size.height;
             float scale = MIN(scalex, scaley);
 
-            if ((scale > 1.0f && !_enableScaleUp) ||
-                (scale < 1.0f && !_enableScaleDown))
-                scale = 1.0f;
             size = CGSizeMake(_realImageView.image.size.width * scale, _realImageView.image.size.height * scale);
             break;
         }
@@ -145,10 +129,6 @@
             float scaley = self.bounds.size.height / _realImageView.image.size.height;
             float scale = MAX(scalex, scaley);
             
-            if ((scale > 1.0f && !_enableScaleUp) ||
-                (scale < 1.0f && !_enableScaleDown))
-                scale = 1.0f;
-            
             size = CGSizeMake(_realImageView.image.size.width * scale, _realImageView.image.size.height * scale);
             break;
         }
@@ -157,13 +137,6 @@
         {
             float scalex = self.bounds.size.width / _realImageView.image.size.width;
             float scaley = self.bounds.size.height / _realImageView.image.size.height;
-
-            if ((scalex > 1.0f && !_enableScaleUp) ||
-                (scalex < 1.0f && !_enableScaleDown))
-                scalex = 1.0f;
-            if ((scaley > 1.0f && !_enableScaleUp) ||
-                (scaley < 1.0f && !_enableScaleDown))
-                scaley = 1.0f;
             
             size = CGSizeMake(_realImageView.image.size.width * scalex, _realImageView.image.size.height * scaley);
             break;
@@ -175,58 +148,6 @@
     }
 
     return size;
-}
-
-
-#pragma mark - Properties needed for Interface Builder
-
-- (BOOL)alignLeft
-{
-    return (_alignment & UIImageViewAlignmentMaskLeft) != 0;
-}
-- (void)setAlignLeft:(BOOL)alignLeft
-{
-    if (alignLeft)
-        self.alignment |= UIImageViewAlignmentMaskLeft;
-    else
-        self.alignment &= ~UIImageViewAlignmentMaskLeft;
-}
-
-- (BOOL)alignRight
-{
-    return (_alignment & UIImageViewAlignmentMaskRight) != 0;
-}
-- (void)setAlignRight:(BOOL)alignRight
-{
-    if (alignRight)
-        self.alignment |= UIImageViewAlignmentMaskRight;
-    else
-        self.alignment &= ~UIImageViewAlignmentMaskRight;
-}
-
-
-- (BOOL)alignTop
-{
-    return (_alignment & UIImageViewAlignmentMaskTop) != 0;
-}
-- (void)setAlignTop:(BOOL)alignTop
-{
-    if (alignTop)
-        self.alignment |= UIImageViewAlignmentMaskTop;
-    else
-        self.alignment &= ~UIImageViewAlignmentMaskTop;
-}
-
-- (BOOL)alignBottom
-{
-    return (_alignment & UIImageViewAlignmentMaskBottom) != 0;
-}
-- (void)setAlignBottom:(BOOL)alignBottom
-{
-    if (alignBottom)
-        self.alignment |= UIImageViewAlignmentMaskBottom;
-    else
-        self.alignment &= ~UIImageViewAlignmentMaskBottom;
 }
 
 @end

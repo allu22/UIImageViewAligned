@@ -17,32 +17,22 @@ typedef enum
     UIImageViewAlignmentMaskTop    = 4,
     UIImageViewAlignmentMaskBottom = 8,
     
-    UIImageViewAlignmentMaskBottomLeft = UIImageViewAlignmentMaskBottom | UIImageViewAlignmentMaskLeft,
+    UIImageViewAlignmentMaskBottomLeft  = UIImageViewAlignmentMaskBottom | UIImageViewAlignmentMaskLeft,
     UIImageViewAlignmentMaskBottomRight = UIImageViewAlignmentMaskBottom | UIImageViewAlignmentMaskRight,
-    UIImageViewAlignmentMaskTopLeft = UIImageViewAlignmentMaskTop | UIImageViewAlignmentMaskLeft,
-    UIImageViewAlignmentMaskTopRight = UIImageViewAlignmentMaskTop | UIImageViewAlignmentMaskRight,
+    UIImageViewAlignmentMaskTopLeft     = UIImageViewAlignmentMaskTop | UIImageViewAlignmentMaskLeft,
+    UIImageViewAlignmentMaskTopRight    = UIImageViewAlignmentMaskTop | UIImageViewAlignmentMaskRight,
     
-}UIImageViewAignmentMask;
+}UIImageViewAlignmentMask;
 
 
 
-@interface UIImageViewAligned : UIImageView
+@interface UIImageViewAligned : UIView
+
+- (instancetype)initWithImage:(UIImage *)image;
+- (UIImage*)image;
+- (void)setImage:(UIImage *)image;
 
 // This property holds the current alignment
-@property (nonatomic) UIImageViewAignmentMask alignment;
-
-// Properties needed for Interface Builder quick setup
-@property (nonatomic) BOOL alignLeft;
-@property (nonatomic) BOOL alignRight;
-@property (nonatomic) BOOL alignTop;
-@property (nonatomic) BOOL alignBottom;
-
-// Make the UIImageView scale only up or down
-// This are used only if the content mode is Scaled
-@property (nonatomic) BOOL enableScaleUp;
-@property (nonatomic) BOOL enableScaleDown;
-
-// Just in case you need access to the inner image view
-@property (nonatomic, readonly) UIImageView* realImageView;
+@property (nonatomic) UIImageViewAlignmentMask alignment;
 
 @end
